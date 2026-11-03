@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>تطبيق يا أهلاً - حساب التارجت والتقفيل</title>
+    <title>تطبيق وكالة يا أهلاً - حساب التارجت والتقفيل</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -138,7 +138,7 @@
     <div id="login-page" class="container mt-5">
         <div class="card-custom text-center py-4">
             <i class="fa-solid fa-gem text-primary fa-3x mb-3"></i>
-            <h4 class="fw-bold mb-3">حساب التارجت في تطبيق يا أهلاً</h4>
+            <h4 class="fw-bold mb-3">وكالة يا أهلاً</h4>
             <p class="text-muted small">تسجيل الدخول للنظام</p>
             <form id="login-form">
                 <div class="mb-3 text-start">
@@ -242,10 +242,10 @@
                 </div>
             </div>
 
-            <!-- 2. صفحة قواعد التقفيل وتحديد كمية الماسات المساعدة (خاصة بـ Owner) -->
+            <!-- 2. صفحة قواعد التقفيل وتحديد كمية الماسات المساعدة -->
             <div id="page-rules" class="hidden-page">
                 <div class="card-custom">
-                    <h6 class="fw-bold mb-3"><i class="fa-solid fa-sliders text-primary me-2"></i>تحديد كمية الماسات المساعدة المسموحة</h6>
+                    <h6 class="fw-bold mb-3"><i class="fa-solid fa-sliders text-primary me-2"></i>تحديد كمية الماسات المساعدة لكل تارجت</h6>
                     
                     <div class="mb-3 bg-light p-3 rounded-3">
                         <label class="form-label small fw-bold">تعيين قيمة مساعدة عامة لجميع التارجتات</label>
@@ -263,7 +263,7 @@
                 </div>
             </div>
 
-            <!-- 3. صفحة الأرباح والعمولات (خاصة بـ Owner) -->
+            <!-- 3. صفحة الأرباح والعمولات -->
             <div id="page-profits" class="hidden-page">
                 <div class="card-custom">
                     <h6 class="fw-bold mb-3"><i class="fa-solid fa-chart-line text-success me-2"></i>جدول أرباح الوكالة</h6>
@@ -284,15 +284,19 @@
                 </div>
             </div>
 
-            <!-- 4. صفحة الإداريين وإعدادات GitHub (خاصة بـ Owner) -->
+            <!-- 4. صفحة الإداريين وإعدادات GitHub API -->
             <div id="page-admin" class="hidden-page">
                 <!-- إعدادات رمز GitHub Token -->
                 <div class="card-custom">
                     <h6 class="fw-bold mb-2"><i class="fa-solid fa-key text-warning me-2"></i>رمز GitHub API Token</h6>
-                    <p class="text-muted extra-small mb-2">يلزم إدخال الرمز لتفعيل الحفظ التلقائي بين كافة الهواتف.</p>
+                    <p class="text-muted extra-small mb-2">ضع الرمز هنا لتفعيل المزامنة الفورية وقاعدة البيانات السحابية.</p>
                     <div class="input-group mb-2">
                         <input type="password" id="github-token-input" class="form-control" placeholder="ghp_xxxxxxxxxxxx">
                         <button class="btn btn-primary" onclick="saveGitHubToken()">حفظ الرمز</button>
+                    </div>
+                    <div class="input-group mb-2">
+                        <input type="text" id="github-repo-input" class="form-control" placeholder="اسم المستخدم/المستودع (مثال: bytesal/taget-calculator)">
+                        <button class="btn btn-secondary" onclick="saveGitHubRepo()">ربط المستودع</button>
                     </div>
                 </div>
 
@@ -305,7 +309,7 @@
                     <div class="mb-3">
                         <input type="password" id="new-admin-pass" class="form-control" placeholder="كلمة المرور">
                     </div>
-                    <button class="btn btn-custom" onclick="addAdminUser()">إضافة الأدمين <i class="fa-solid fa-plus ms-1"></i></button>
+                    <button class="btn btn-custom" onclick="addAdminUser()">إضافة الأدمين سحابياً <i class="fa-solid fa-plus ms-1"></i></button>
                     
                     <h6 class="fw-bold mt-4 mb-2">قائمة الإداريين المسجلين</h6>
                     <ul id="admin-list" class="list-group">
@@ -339,7 +343,6 @@
     </div>
 
     <script>
-        // البيانات الأساسية لجدول تطبيق "يا أهلاً"
         const TARGET_DATA = [
             { coins: 16700, diamonds: 2783, hostSalary: 5, agencySalary: 1 },
             { coins: 33500, diamonds: 5583, hostSalary: 9, agencySalary: 2 },
@@ -370,22 +373,86 @@
             { coins: 83335000, diamonds: 13889167, hostSalary: 15000, agencySalary: 5000 }
         ];
 
-        // الحالة العامة للتطبيق
         let currentUser = null;
         let adminUsers = JSON.parse(localStorage.getItem('admin_users')) || [];
         let targetRules = JSON.parse(localStorage.getItem('target_rules_amount')) || {};
         let githubToken = localStorage.getItem('gh_token') || '';
+        let githubRepo = localStorage.getItem('gh_repo') || 'bytesal/taget-calculator';
 
-        // تهيئة القيمة الافتراضية إذا لم تكن موجودة (1000 ماسة كإعداد افتراضي)
         if (Object.keys(targetRules).length === 0) {
             TARGET_DATA.forEach(t => targetRules[t.diamonds] = 1000);
         }
 
-        // تسجيل الدخول
-        document.getElementById('login-form').addEventListener('submit', function(e) {
+        // جلب البيانات من GitHub عند بدء التشغيل للتأكد من المزامنة
+        async function fetchCloudData() {
+            if (!githubToken || !githubRepo) return;
+            try {
+                const res = await fetch(`https://api.github.com/repos/${githubRepo}/contents/db.json`, {
+                    headers: { 'Authorization': `token ${githubToken}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    const content = JSON.parse(atob(data.content));
+                    if (content.adminUsers) {
+                        adminUsers = content.adminUsers;
+                        localStorage.setItem('admin_users', JSON.stringify(adminUsers));
+                    }
+                    if (content.targetRules) {
+                        targetRules = content.targetRules;
+                        localStorage.setItem('target_rules_amount', JSON.stringify(targetRules));
+                    }
+                    console.log("تم مزامنة البيانات من السحاب بنجاح!");
+                }
+            } catch (err) {
+                console.log("الاعتماد على الذاكرة المحلية حالياً");
+            }
+        }
+
+        // حفظ البيانات على GitHub API
+        async function saveToCloud() {
+            if (!githubToken || !githubRepo) return;
+            try {
+                const payload = {
+                    adminUsers: adminUsers,
+                    targetRules: targetRules
+                };
+                const contentEncoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
+                
+                // جلب SHA للملف الحالي إن وجد
+                let sha = '';
+                const getRes = await fetch(`https://api.github.com/repos/${githubRepo}/contents/db.json`, {
+                    headers: { 'Authorization': `token ${githubToken}` }
+                });
+                if (getRes.ok) {
+                    const fileData = await getRes.json();
+                    sha = fileData.sha;
+                }
+
+                // رفع البيانات الجديدة
+                await fetch(`https://api.github.com/repos/${githubRepo}/contents/db.json`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${githubToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: 'Update agency database via mobile app',
+                        content: contentEncoded,
+                        sha: sha ? sha : undefined
+                    })
+                });
+                console.log("تم حفظ التعديلات سحابياً بنجاح!");
+            } catch (err) {
+                console.error("خطأ في الحفظ السحابي:", err);
+            }
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             const u = document.getElementById('username').value.trim();
             const p = document.getElementById('password').value.trim();
+
+            await fetchCloudData(); // تحديث البيانات قبل التحقق
 
             if (u === 'owner' && p === '111998s') {
                 currentUser = { username: 'owner', role: 'owner' };
@@ -401,7 +468,6 @@
             initApp();
         });
 
-        // تهيئة التطبيق بعد الدخول
         function initApp() {
             document.getElementById('login-page').classList.add('hidden-page');
             document.getElementById('app-content').classList.remove('hidden-page');
@@ -420,6 +486,7 @@
             renderProfitTable();
             renderAdminList();
             document.getElementById('github-token-input').value = githubToken;
+            document.getElementById('github-repo-input').value = githubRepo;
         }
 
         function logout() {
@@ -428,7 +495,6 @@
             document.getElementById('login-page').classList.remove('hidden-page');
         }
 
-        // التبديل بين الواجهات
         function switchPage(pageId, navEl) {
             document.querySelectorAll('#page-calc, #page-rules, #page-profits, #page-admin').forEach(p => p.classList.add('hidden-page'));
             document.querySelectorAll('.nav-item-custom').forEach(n => n.classList.remove('active'));
@@ -459,7 +525,6 @@
             });
         }
 
-        // رسم صفحة أدخال عدد الماسات المساعدة المسموحة لكل تارجت
         function renderRulesPage() {
             const container = document.getElementById('target-rules-list');
             container.innerHTML = '';
@@ -486,14 +551,14 @@
             document.querySelectorAll('.rule-amount-input').forEach(inp => inp.value = val);
         }
 
-        function saveRulesCloud() {
+        async function saveRulesCloud() {
             document.querySelectorAll('.rule-amount-input').forEach(inp => {
                 const target = inp.getAttribute('data-target');
                 targetRules[target] = parseFloat(inp.value) || 0;
             });
             localStorage.setItem('target_rules_amount', JSON.stringify(targetRules));
-            syncWithGitHub();
-            alert('تم حفظ كميات الماسات المساعدة وتحديثها بنجاح!');
+            await saveToCloud();
+            alert('تم حفظ كميات التقفيل وتحديثها سحابياً لجميع الأجهزة بنجاح!');
         }
 
         function renderProfitTable() {
@@ -510,7 +575,6 @@
             });
         }
 
-        // حساب تقفيل التارجت
         function calculateTarget() {
             const mode = document.getElementById('calc-mode').value;
             let currentDiamonds = 0;
@@ -561,7 +625,6 @@
             document.getElementById('result-area').classList.remove('hidden-page');
         }
 
-        // نسخ التقرير
         function copyReport() {
             const target = document.getElementById('res-target-val').innerText;
             const current = document.getElementById('res-current-diamonds').innerText;
@@ -584,8 +647,7 @@
             alert('تم نسخ التقرير بنجاح! يمكنك لصقه الآن في الواتساب.');
         }
 
-        // إدارة الإداريين
-        function addAdminUser() {
+        async function addAdminUser() {
             const u = document.getElementById('new-admin-user').value.trim();
             const p = document.getElementById('new-admin-pass').value.trim();
 
@@ -599,15 +661,15 @@
             document.getElementById('new-admin-user').value = '';
             document.getElementById('new-admin-pass').value = '';
             renderAdminList();
-            syncWithGitHub();
-            alert('تمت إضافة الأدمين بنجاح!');
+            await saveToCloud();
+            alert('تمت إضافة الأدمين وتحديثه سحابياً بنجاح!');
         }
 
-        function removeAdmin(index) {
+        async function removeAdmin(index) {
             adminUsers.splice(index, 1);
             localStorage.setItem('admin_users', JSON.stringify(adminUsers));
             renderAdminList();
-            syncWithGitHub();
+            await saveToCloud();
         }
 
         function renderAdminList() {
@@ -630,9 +692,10 @@
             alert('تم حفظ الرمز بنجاح!');
         }
 
-        function syncWithGitHub() {
-            if (!githubToken) return;
-            console.log("تزامن سحابي مع GitHub...");
+        function saveGitHubRepo() {
+            githubRepo = document.getElementById('github-repo-input').value.trim();
+            localStorage.setItem('gh_repo', githubRepo);
+            alert('تم ربط المستودع بنجاح!');
         }
     </script>
 </body>
