@@ -286,7 +286,6 @@
 
             <!-- 4. صفحة الإداريين -->
             <div id="page-admin" class="hidden-page">
-                <!-- إضافة حساب إداري -->
                 <div class="card-custom">
                     <h6 class="fw-bold mb-3"><i class="fa-solid fa-user-plus text-primary me-2"></i>إنشاء حساب إداري جديد</h6>
                     <div class="mb-2">
@@ -366,13 +365,9 @@
         let adminUsers = [];
         let targetRules = {};
 
-        // جلب البيانات من JSONBin السحابي
         async function fetchCloudData() {
             try {
-                const res = await fetch(API_URL + '/latest', {
-                    headers: { 'X-Master-Key': '$2a$10$XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' }, // مجاني ومفتوح للقراءة في وضع القراءة العام
-                    cache: 'no-store'
-                });
+                const res = await fetch(API_URL + '/latest', { cache: 'no-store' });
                 if (res.ok) {
                     const json = await res.json();
                     const data = json.record;
@@ -392,16 +387,12 @@
             }
         }
 
-        // حفظ البيانات في السحاب
         async function saveToCloud() {
             try {
                 const payload = { adminUsers, targetRules };
                 await fetch(API_URL, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': '$2a$10$XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
                 alert('تم التحديث وحفظ البيانات سحابياً بنجاح! 🚀');
