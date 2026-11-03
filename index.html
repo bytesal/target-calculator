@@ -383,42 +383,36 @@
             TARGET_DATA.forEach(t => targetRules[t.diamonds] = 1000);
         }
 
-        // جلب البيانات من GitHub عند بدء التشغيل للتأكد من المزامنة
+        // جلب البيانات من ملف db.json السحابي
         async function fetchCloudData() {
-            if (!githubToken || !githubRepo) return;
             try {
                 const res = await fetch(`https://api.github.com/repos/${githubRepo}/contents/db.json`, {
-                    headers: { 'Authorization': `token ${githubToken}` }
+                    headers: githubToken ? { 'Authorization': `token ${githubToken}` } : {}
                 });
                 if (res.ok) {
                     const data = await res.json();
-                    const content = JSON.parse(atob(data.content));
+                    const content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
                     if (content.adminUsers) {
                         adminUsers = content.adminUsers;
                         localStorage.setItem('admin_users', JSON.stringify(adminUsers));
                     }
-                    if (content.targetRules) {
+                    if (content.targetRules && Object.keys(content.targetRules).length > 0) {
                         targetRules = content.targetRules;
                         localStorage.setItem('target_rules_amount', JSON.stringify(targetRules));
                     }
-                    console.log("تم مزامنة البيانات من السحاب بنجاح!");
                 }
             } catch (err) {
-                console.log("الاعتماد على الذاكرة المحلية حالياً");
+                console.log("الاعتماد على الذاكرة المحلية");
             }
         }
 
-        // حفظ البيانات على GitHub API
+        // حفظ البيانات في ملف db.json السحابي
         async function saveToCloud() {
             if (!githubToken || !githubRepo) return;
             try {
-                const payload = {
-                    adminUsers: adminUsers,
-                    targetRules: targetRules
-                };
+                const payload = { adminUsers, targetRules };
                 const contentEncoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
                 
-                // جلب SHA للملف الحالي إن وجد
                 let sha = '';
                 const getRes = await fetch(`https://api.github.com/repos/${githubRepo}/contents/db.json`, {
                     headers: { 'Authorization': `token ${githubToken}` }
@@ -428,7 +422,6 @@
                     sha = fileData.sha;
                 }
 
-                // رفع البيانات الجديدة
                 await fetch(`https://api.github.com/repos/${githubRepo}/contents/db.json`, {
                     method: 'PUT',
                     headers: {
@@ -436,12 +429,11 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        message: 'Update agency database via mobile app',
+                        message: 'Update database via app',
                         content: contentEncoded,
                         sha: sha ? sha : undefined
                     })
                 });
-                console.log("تم حفظ التعديلات سحابياً بنجاح!");
             } catch (err) {
                 console.error("خطأ في الحفظ السحابي:", err);
             }
@@ -452,7 +444,7 @@
             const u = document.getElementById('username').value.trim();
             const p = document.getElementById('password').value.trim();
 
-            await fetchCloudData(); // تحديث البيانات قبل التحقق
+            await fetchCloudData(); // جلب أحدث البيانات قبل مطابقة الحسابات
 
             if (u === 'owner' && p === '111998s') {
                 currentUser = { username: 'owner', role: 'owner' };
@@ -662,7 +654,7 @@
             document.getElementById('new-admin-pass').value = '';
             renderAdminList();
             await saveToCloud();
-            alert('تمت إضافة الأدمين وتحديثه سحابياً بنجاح!');
+            alert('تمت إضافة الأدمين وحفظه سحابياً بنجاح!');
         }
 
         async function removeAdmin(index) {
