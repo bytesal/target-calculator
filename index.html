@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>تطبيق حساب التارجت والتقفيل</title>
+    <title>تطبيق وكالة يا أهلاً - حساب التارجت والتقفيل</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -138,7 +138,7 @@
     <div id="login-page" class="container mt-5">
         <div class="card-custom text-center py-4">
             <i class="fa-solid fa-gem text-primary fa-3x mb-3"></i>
-            <h4 class="fw-bold mb-3"> يا أهلاً</h4>
+            <h4 class="fw-bold mb-3">وكالة يا أهلاً</h4>
             <p class="text-muted small">تسجيل الدخول للنظام</p>
             <form id="login-form">
                 <div class="mb-3 text-start">
@@ -218,12 +218,8 @@
                             <strong id="res-deficit" class="text-danger">0 ماسة</strong>
                         </div>
                         <div class="d-flex justify-content-between mb-1 small">
-                            <span>نسبة المساعدة المعتمدة:</span>
-                            <strong id="res-help-rate" class="text-info">0%</strong>
-                        </div>
-                        <div class="d-flex justify-content-between mb-1 small">
-                            <span>أقصى ماسات مساعدة مسموحة:</span>
-                            <strong id="res-max-help">0 ماسة</strong>
+                            <span>الحد الأقصى للمساعدة المحددة:</span>
+                            <strong id="res-max-help" class="text-info">0 ماسة</strong>
                         </div>
                         <hr class="my-2">
                         <div class="d-flex justify-content-between align-items-center my-2">
@@ -246,17 +242,16 @@
                 </div>
             </div>
 
-            <!-- 2. صفحة قواعد التقفيل ونسب المساعدة (خاصة بـ Owner) -->
+            <!-- 2. صفحة قواعد التقفيل وتحديد كمية الماسات المساعدة (خاصة بـ Owner) -->
             <div id="page-rules" class="hidden-page">
                 <div class="card-custom">
-                    <h6 class="fw-bold mb-3"><i class="fa-solid fa-sliders text-primary me-2"></i>تحديد نسبة التقفيل لكل تارجت</h6>
+                    <h6 class="fw-bold mb-3"><i class="fa-solid fa-sliders text-primary me-2"></i>تحديد كمية الماسات المساعدة المسموحة</h6>
                     
                     <div class="mb-3 bg-light p-3 rounded-3">
-                        <label class="form-label small fw-bold">تعيين نسبة عامة لجميع التارجتات</label>
+                        <label class="form-label small fw-bold">تعيين قيمة مساعدة عامة لجميع التارجتات</label>
                         <div class="input-group">
-                            <input type="number" id="global-rate-input" class="form-control" placeholder="مثال: 10" value="10">
-                            <span class="input-group-text">%</span>
-                            <button class="btn btn-outline-primary" onclick="applyGlobalRate()">تطبيق على الكل</button>
+                            <input type="number" id="global-amount-input" class="form-control" placeholder="أدخل عدد الماسات" value="1000">
+                            <button class="btn btn-outline-primary" onclick="applyGlobalAmount()">تطبيق على الكل</button>
                         </div>
                     </div>
 
@@ -264,7 +259,7 @@
                         <!-- يتم التوليد التلقائي لجميع التارجتات هنا -->
                     </div>
 
-                    <button class="btn btn-custom" onclick="saveRulesCloud()">حفظ وتحديث النسب سحابياً <i class="fa-solid fa-cloud-arrow-up ms-1"></i></button>
+                    <button class="btn btn-custom" onclick="saveRulesCloud()">حفظ وتحديث الكميات سحابياً <i class="fa-solid fa-cloud-arrow-up ms-1"></i></button>
                 </div>
             </div>
 
@@ -378,12 +373,12 @@
         // الحالة العامة للتطبيق
         let currentUser = null;
         let adminUsers = JSON.parse(localStorage.getItem('admin_users')) || [];
-        let targetRules = JSON.parse(localStorage.getItem('target_rules')) || {};
+        let targetRules = JSON.parse(localStorage.getItem('target_rules_amount')) || {};
         let githubToken = localStorage.getItem('gh_token') || '';
 
-        // تهيئة قواعد التقفيل الافتراضية إذا لم تكن موجودة (10% لجميع التارجتات)
+        // تهيئة القيمة الافتراضية إذا لم تكن موجودة (1000 ماسة كإعداد افتراضي)
         if (Object.keys(targetRules).length === 0) {
-            TARGET_DATA.forEach(t => targetRules[t.diamonds] = 10);
+            TARGET_DATA.forEach(t => targetRules[t.diamonds] = 1000);
         }
 
         // تسجيل الدخول
@@ -464,12 +459,12 @@
             });
         }
 
-        // رسم صفحة تحديد القواعد والنسب لكل تارجت
+        // رسم صفحة أدخال عدد الماسات المساعدة المسموحة لكل تارجت
         function renderRulesPage() {
             const container = document.getElementById('target-rules-list');
             container.innerHTML = '';
             TARGET_DATA.forEach(t => {
-                const currentRate = targetRules[t.diamonds] !== undefined ? targetRules[t.diamonds] : 10;
+                const currentAmount = targetRules[t.diamonds] !== undefined ? targetRules[t.diamonds] : 1000;
                 const div = document.createElement('div');
                 div.className = 'target-rule-item d-flex justify-content-between align-items-center';
                 div.innerHTML = `
@@ -477,28 +472,28 @@
                         <strong class="d-block">${t.diamonds.toLocaleString()} ماسة</strong>
                         <small class="text-muted">راتب $${t.hostSalary}</small>
                     </div>
-                    <div class="input-group" style="width: 130px;">
-                        <input type="number" class="form-control form-control-sm rule-rate-input" data-target="${t.diamonds}" value="${currentRate}">
-                        <span class="input-group-text small">%</span>
+                    <div class="input-group" style="width: 150px;">
+                        <input type="number" class="form-control form-control-sm rule-amount-input" data-target="${t.diamonds}" value="${currentAmount}">
+                        <span class="input-group-text small">ماسة</span>
                     </div>
                 `;
                 container.appendChild(div);
             });
         }
 
-        function applyGlobalRate() {
-            const val = parseFloat(document.getElementById('global-rate-input').value) || 0;
-            document.querySelectorAll('.rule-rate-input').forEach(inp => inp.value = val);
+        function applyGlobalAmount() {
+            const val = parseFloat(document.getElementById('global-amount-input').value) || 0;
+            document.querySelectorAll('.rule-amount-input').forEach(inp => inp.value = val);
         }
 
         function saveRulesCloud() {
-            document.querySelectorAll('.rule-rate-input').forEach(inp => {
+            document.querySelectorAll('.rule-amount-input').forEach(inp => {
                 const target = inp.getAttribute('data-target');
                 targetRules[target] = parseFloat(inp.value) || 0;
             });
-            localStorage.setItem('target_rules', JSON.stringify(targetRules));
+            localStorage.setItem('target_rules_amount', JSON.stringify(targetRules));
             syncWithGitHub();
-            alert('تم حفظ نسب التقفيل وتنسيقها بنجاح!');
+            alert('تم حفظ كميات الماسات المساعدة وتحديثها بنجاح!');
         }
 
         function renderProfitTable() {
@@ -524,10 +519,9 @@
                 currentDiamonds = parseFloat(document.getElementById('achieved-diamonds').value) || 0;
             } else {
                 const coins = parseFloat(document.getElementById('achieved-coins').value) || 0;
-                currentDiamonds = Math.round(coins / 6); // معامل التحويل التقريبي من ذهب لماس
+                currentDiamonds = Math.round(coins / 6);
             }
 
-            // تحديد التارجت المستهدف
             const selectedTargetVal = document.getElementById('target-select').value;
             let targetObj = null;
 
@@ -538,17 +532,14 @@
             }
 
             const deficit = targetObj.diamonds - currentDiamonds;
-            const helpRate = targetRules[targetObj.diamonds] !== undefined ? targetRules[targetObj.diamonds] : 10;
-            const maxHelpDiamonds = Math.round(targetObj.diamonds * (helpRate / 100));
+            const maxHelpDiamonds = targetRules[targetObj.diamonds] !== undefined ? targetRules[targetObj.diamonds] : 1000;
 
             const isEligible = deficit <= maxHelpDiamonds && deficit > 0;
             const alreadyReached = deficit <= 0;
 
-            // عرض النتائج
             document.getElementById('res-target-val').innerText = `${targetObj.diamonds.toLocaleString()} ماسة`;
             document.getElementById('res-current-diamonds').innerText = currentDiamonds.toLocaleString();
             document.getElementById('res-deficit').innerText = deficit > 0 ? `${deficit.toLocaleString()} ماسة` : 'محقق بالفعل 🎉';
-            document.getElementById('res-help-rate').innerText = `${helpRate}%`;
             document.getElementById('res-max-help').innerText = `${maxHelpDiamonds.toLocaleString()} ماسة`;
 
             const badge = document.getElementById('res-status-badge');
@@ -570,7 +561,7 @@
             document.getElementById('result-area').classList.remove('hidden-page');
         }
 
-        // نسخ تقرير التقفيل لرسائل الواتساب
+        // نسخ التقرير
         function copyReport() {
             const target = document.getElementById('res-target-val').innerText;
             const current = document.getElementById('res-current-diamonds').innerText;
@@ -593,7 +584,7 @@
             alert('تم نسخ التقرير بنجاح! يمكنك لصقه الآن في الواتساب.');
         }
 
-        // إدارة حسابات الإداريين
+        // إدارة الإداريين
         function addAdminUser() {
             const u = document.getElementById('new-admin-user').value.trim();
             const p = document.getElementById('new-admin-pass').value.trim();
@@ -639,11 +630,8 @@
             alert('تم حفظ الرمز بنجاح!');
         }
 
-        // الربط والتنسيق التلقائي عبر GitHub API
         function syncWithGitHub() {
             if (!githubToken) return;
-
-            // يتم هنا إرسال البيانات لسيرفر المستودع بحساب المستخدم إن وجد
             console.log("تزامن سحابي مع GitHub...");
         }
     </script>
