@@ -1,640 +1,559 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>تطبيق وكالة يا أهلاً - حساب التارجت والتقفيل</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #4f46e5;
-            --primary-dark: #3730a3;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-color: #0f172a;
-            --accent-green: #10b981;
-            --accent-red: #ef4444;
-        }
-
-        body {
-            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            padding-bottom: 90px;
-            user-select: none;
-        }
-
-        .navbar-custom {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-            padding: 15px;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.2);
-        }
-
-        .card-custom {
-            background: var(--card-bg);
-            border-radius: 16px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            margin-bottom: 16px;
-            padding: 16px;
-        }
-
-        .form-control, .form-select {
-            border-radius: 12px;
-            padding: 12px;
-            font-size: 16px;
-            border: 1px solid #cbd5e1;
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
-        }
-
-        .btn-custom {
-            background-color: var(--primary-color);
-            color: white;
-            border-radius: 12px;
-            padding: 12px;
-            font-weight: 600;
-            width: 100%;
-            border: none;
-        }
-
-        .btn-custom:active {
-            background-color: var(--primary-dark);
-        }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            border-top: 1px solid #e2e8f0;
-            box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
-            z-index: 1000;
-        }
-
-        .nav-item-custom {
-            text-align: center;
-            color: #64748b;
-            font-size: 11px;
-            text-decoration: none;
-            cursor: pointer;
-            flex: 1;
-        }
-
-        .nav-item-custom i {
-            font-size: 20px;
-            display: block;
-            margin-bottom: 2px;
-        }
-
-        .nav-item-custom.active {
-            color: var(--primary-color);
-            font-weight: bold;
-        }
-
-        .result-box {
-            background-color: #f1f5f9;
-            border-radius: 12px;
-            padding: 15px;
-            margin-top: 15px;
-        }
-
-        .badge-status {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .badge-success { background: #dcfce7; color: #166534; }
-        .badge-danger { background: #fee2e2; color: #991b1b; }
-
-        .hidden-page { display: none !important; }
-        
-        .target-rule-item {
-            border-bottom: 1px solid #e2e8f0;
-            padding: 10px 0;
-        }
-
-        .target-rule-item:last-child {
-            border-bottom: none;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>تطبيق وكالة يا أهلاً - حساب التارجت والتقفيل</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+:root{--primary:#4f46e5;--primary-dark:#3730a3;--bg:#f8fafc;--card:#fff;--text:#0f172a}
+body{font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;background:var(--bg);color:var(--text);padding-bottom:90px}
+.navbar-custom{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;padding:15px;border-radius:0 0 20px 20px;box-shadow:0 4px 15px rgba(79,70,229,.2)}
+.card-custom{background:var(--card);border-radius:16px;border:1px solid #e2e8f0;box-shadow:0 4px 6px -1px rgba(0,0,0,.05);margin-bottom:16px;padding:16px}
+.form-control,.form-select{border-radius:12px;padding:12px;font-size:16px;border:1px solid #cbd5e1}
+.form-control:focus,.form-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,70,229,.2)}
+.btn-custom{background:var(--primary);color:#fff;border-radius:12px;padding:12px;font-weight:600;width:100%;border:none}
+.btn-custom:active,.btn-custom:hover{background:var(--primary-dark);color:#fff}
+.btn-custom:disabled{opacity:.6}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #e2e8f0;box-shadow:0 -4px 10px rgba(0,0,0,.05);z-index:1000}
+.nav-item-custom{text-align:center;color:#64748b;font-size:11px;cursor:pointer;flex:1}
+.nav-item-custom i{font-size:20px;display:block;margin-bottom:2px}
+.nav-item-custom.active{color:var(--primary);font-weight:bold}
+.result-box{background:#f1f5f9;border-radius:12px;padding:15px;margin-top:15px}
+.badge-status{padding:6px 12px;border-radius:20px;font-size:13px;font-weight:600}
+.badge-success{background:#dcfce7;color:#166534}
+.badge-danger{background:#fee2e2;color:#991b1b}
+.badge-info2{background:#e0e7ff;color:#3730a3}
+.hidden-page{display:none!important}
+.target-rule-item{border-bottom:1px solid #e2e8f0;padding:10px 0}
+.target-rule-item:last-child{border-bottom:none}
+#toast{position:fixed;top:15px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:12px;z-index:3000;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;max-width:90%;text-align:center}
+#toast.show{opacity:1}
+</style>
 </head>
 <body>
 
-    <!-- شاشة تسجيل الدخول -->
-    <div id="login-page" class="container mt-5">
-        <div class="card-custom text-center py-4">
-            <i class="fa-solid fa-gem text-primary fa-3x mb-3"></i>
-            <h4 class="fw-bold mb-3">وكالة يا أهلاً</h4>
-            <p class="text-muted small">تسجيل الدخول للنظام</p>
-            <form id="login-form">
-                <div class="mb-3 text-start">
-                    <label class="form-label small fw-bold">اسم المستخدم</label>
-                    <input type="text" id="username" class="form-control" placeholder="ادخل اسم المستخدم" required>
-                </div>
-                <div class="mb-4 text-start">
-                    <label class="form-label small fw-bold">كلمة المرور</label>
-                    <input type="password" id="password" class="form-control" placeholder="ادخل كلمة المرور" required>
-                </div>
-                <button type="submit" class="btn btn-custom">دخول <i class="fa-solid fa-arrow-left ms-1"></i></button>
-            </form>
+<div id="toast"></div>
+
+<!-- تسجيل الدخول -->
+<div id="login-page" class="container mt-5">
+  <div class="card-custom text-center py-4">
+    <i class="fa-solid fa-gem text-primary fa-3x mb-3"></i>
+    <h4 class="fw-bold mb-3">وكالة يا أهلاً</h4>
+    <p class="text-muted small">تسجيل الدخول للنظام</p>
+    <form id="login-form">
+      <div class="mb-3">
+        <label class="form-label small fw-bold d-block text-start-rtl">اسم المستخدم</label>
+        <input type="text" id="username" class="form-control" placeholder="ادخل اسم المستخدم" autocomplete="username" required>
+      </div>
+      <div class="mb-4">
+        <label class="form-label small fw-bold d-block">كلمة المرور</label>
+        <input type="password" id="password" class="form-control" placeholder="ادخل كلمة المرور" autocomplete="current-password" required>
+      </div>
+      <button type="submit" id="login-btn" class="btn btn-custom">دخول <i class="fa-solid fa-arrow-left ms-1"></i></button>
+    </form>
+  </div>
+</div>
+
+<!-- التطبيق -->
+<div id="app-content" class="hidden-page">
+  <div class="navbar-custom d-flex justify-content-between align-items-center">
+    <div>
+      <h6 class="mb-0 fw-bold" id="user-display">مرحباً بك</h6>
+      <small class="opacity-75" id="role-display"></small>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-sm btn-outline-light rounded-pill" onclick="refreshData()" title="تحديث"><i class="fa-solid fa-rotate"></i></button>
+      <button class="btn btn-sm btn-outline-light rounded-pill" onclick="logout()" title="خروج"><i class="fa-solid fa-sign-out-alt"></i></button>
+    </div>
+  </div>
+
+  <div class="container mt-3">
+
+    <!-- 1. حساب التارجت -->
+    <div id="page-calc">
+      <div class="card-custom">
+        <h6 class="fw-bold mb-3"><i class="fa-solid fa-calculator text-primary me-2"></i>حساب تقفيل التارجت</h6>
+
+        <div class="mb-3">
+          <label class="form-label small fw-bold">طريقة إدخال إنجاز المضيف</label>
+          <select id="calc-mode" class="form-select" onchange="toggleInputMode()">
+            <option value="diamonds">بالماسات (الأساسي)</option>
+            <option value="coins">بالعملات الذهبية (÷ 6)</option>
+          </select>
         </div>
+
+        <div class="mb-3" id="diamonds-input-group">
+          <label class="form-label small fw-bold">عدد الماسات المحققة</label>
+          <input type="number" id="achieved-diamonds" class="form-control" inputmode="numeric" min="0" placeholder="مثال: 25000">
+        </div>
+
+        <div class="mb-3 hidden-page" id="coins-input-group">
+          <label class="form-label small fw-bold">عدد العملات الذهبية المحققة</label>
+          <input type="number" id="achieved-coins" class="form-control" inputmode="numeric" min="0" placeholder="مثال: 150000">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label small fw-bold">التارجت المراد تقفيله</label>
+          <select id="target-select" class="form-select">
+            <option value="auto">تلقائي (التارجت القادم فوراً)</option>
+          </select>
+        </div>
+
+        <button class="btn btn-custom" onclick="calculateTarget()">احسب التقفيل <i class="fa-solid fa-bolt ms-1"></i></button>
+
+        <div id="result-area" class="result-box hidden-page">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="fw-bold">التارجت المستهدف:</span>
+            <span id="res-target-val" class="badge bg-primary">0 ماسة</span>
+          </div>
+          <hr class="my-2">
+          <div class="d-flex justify-content-between mb-1 small"><span>الماسات الحالية:</span><strong id="res-current-diamonds">0</strong></div>
+          <div class="d-flex justify-content-between mb-1 small"><span>النقص الإجمالي للتارجت:</span><strong id="res-deficit" class="text-danger">0</strong></div>
+          <div class="d-flex justify-content-between mb-1 small"><span>الحد الأقصى للمساعدة:</span><strong id="res-max-help" class="text-info">0</strong></div>
+          <hr class="my-2">
+          <div class="d-flex justify-content-between align-items-center my-2">
+            <span class="fw-bold">حالة التقفيل:</span>
+            <span id="res-status-badge" class="badge-status">-</span>
+          </div>
+          <div class="d-flex justify-content-between mb-1 small"><span>ماسات تقفيل الوكيل المطلوبة:</span><strong id="res-agent-pay" class="text-success">0</strong></div>
+          <div class="d-flex justify-content-between mb-1 small"><span>راتب المضيف:</span><strong id="res-host-salary" class="text-primary">$0</strong></div>
+
+          <button class="btn btn-sm btn-outline-secondary w-100 mt-3" onclick="copyReport()">
+            <i class="fa-regular fa-copy me-1"></i> نسخ التقرير للواتساب
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!-- التطبيق الرئيسي -->
-    <div id="app-content" class="hidden-page">
-        
-        <!-- الهيدر العلوي -->
-        <div class="navbar-custom d-flex justify-content-between align-items-center">
-            <div>
-                <h6 class="mb-0 fw-bold" id="user-display">مرحباً بك</h6>
-                <small class="opacity-75" id="role-display">صلاحية المستخدم</small>
-            </div>
-            <button class="btn btn-sm btn-outline-light rounded-pill" onclick="logout()">
-                <i class="fa-solid fa-sign-out-alt"></i>
-            </button>
+    <!-- 2. قواعد التقفيل -->
+    <div id="page-rules" class="hidden-page">
+      <div class="card-custom">
+        <h6 class="fw-bold mb-3"><i class="fa-solid fa-sliders text-primary me-2"></i>تحديد كمية الماسات المساعدة لكل تارجت</h6>
+        <div class="mb-3 bg-light p-3 rounded-3">
+          <label class="form-label small fw-bold">تطبيق قيمة مساعدة عامة على الكل</label>
+          <div class="input-group">
+            <input type="number" id="global-amount-input" class="form-control" min="0" placeholder="عدد الماسات" value="1000">
+            <button class="btn btn-outline-primary" onclick="applyGlobalAmount()">تطبيق على الكل</button>
+          </div>
         </div>
-
-        <div class="container mt-3">
-
-            <!-- 1. صفحة حساب التارجت -->
-            <div id="page-calc">
-                <div class="card-custom">
-                    <h6 class="fw-bold mb-3"><i class="fa-solid fa-calculator text-primary me-2"></i>حساب تقفيل التارجت</h6>
-                    
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">طريقة إدخال إنجاز المضيف</label>
-                        <select id="calc-mode" class="form-select" onchange="toggleInputMode()">
-                            <option value="diamonds">بالماسات (الأساسي)</option>
-                            <option value="coins">بالعملات الذهبية</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3" id="diamonds-input-group">
-                        <label class="form-label small fw-bold">عدد الماسات المحققة</label>
-                        <input type="number" id="achieved-diamonds" class="form-control" inputmode="numeric" placeholder="مثال: 25000">
-                    </div>
-
-                    <div class="mb-3 hidden-page" id="coins-input-group">
-                        <label class="form-label small fw-bold">عدد العملات الذهبية المحققة</label>
-                        <input type="number" id="achieved-coins" class="form-control" inputmode="numeric" placeholder="مثال: 150000">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">التارجت المراد تقفيله (اختياري / يدوي)</label>
-                        <select id="target-select" class="form-select">
-                            <option value="auto">تلقائي (التارجت القادم فوراً)</option>
-                        </select>
-                    </div>
-
-                    <button class="btn btn-custom" onclick="calculateTarget()">احسب التقفيل <i class="fa-solid fa-bolt ms-1"></i></button>
-
-                    <!-- نتائج الحساب -->
-                    <div id="result-area" class="result-box hidden-page">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="fw-bold">التارجت المستهدف:</span>
-                            <span id="res-target-val" class="badge bg-primary">0 ماسة</span>
-                        </div>
-                        <hr class="my-2">
-                        <div class="d-flex justify-content-between mb-1 small">
-                            <span>الماسات الحالية:</span>
-                            <strong id="res-current-diamonds">0</strong>
-                        </div>
-                        <div class="d-flex justify-content-between mb-1 small">
-                            <span>النقص الإجمالي للتارجت:</span>
-                            <strong id="res-deficit" class="text-danger">0 ماسة</strong>
-                        </div>
-                        <div class="d-flex justify-content-between mb-1 small">
-                            <span>الحد الأقصى للمساعدة المحددة:</span>
-                            <strong id="res-max-help" class="text-info">0 ماسة</strong>
-                        </div>
-                        <hr class="my-2">
-                        <div class="d-flex justify-content-between align-items-center my-2">
-                            <span class="fw-bold">حالة التقفيل:</span>
-                            <span id="res-status-badge" class="badge-status">غير محدد</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-1 small">
-                            <span>ماسات تقفيل الوكيل المطلوبة:</span>
-                            <strong id="res-agent-pay" class="text-success">0 ماسة</strong>
-                        </div>
-                        <div class="d-flex justify-content-between mb-1 small">
-                            <span>راتب المضيف بعد التقفيل:</span>
-                            <strong id="res-host-salary" class="text-primary">$0</strong>
-                        </div>
-                        
-                        <button class="btn btn-sm btn-outline-secondary w-100 mt-3" onclick="copyReport()">
-                            <i class="fa-regular fa-copy me-1"></i> نسخ التقرير للواتساب
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 2. صفحة قواعد التقفيل وتحديد كمية الماسات المساعدة -->
-            <div id="page-rules" class="hidden-page">
-                <div class="card-custom">
-                    <h6 class="fw-bold mb-3"><i class="fa-solid fa-sliders text-primary me-2"></i>تحديد كمية الماسات المساعدة لكل تارجت</h6>
-                    
-                    <div class="mb-3 bg-light p-3 rounded-3">
-                        <label class="form-label small fw-bold">تعيين قيمة مساعدة عامة لجميع التارجتات</label>
-                        <div class="input-group">
-                            <input type="number" id="global-amount-input" class="form-control" placeholder="أدخل عدد الماسات" value="1000">
-                            <button class="btn btn-outline-primary" onclick="applyGlobalAmount()">تطبيق على الكل</button>
-                        </div>
-                    </div>
-
-                    <div id="target-rules-list" class="mb-3" style="max-height: 350px; overflow-y: auto;">
-                        <!-- يتم التوليد التلقائي لجميع التارجتات هنا -->
-                    </div>
-
-                    <button class="btn btn-custom" onclick="saveRulesCloud()">حفظ وتحديث الكميات سحابياً <i class="fa-solid fa-cloud-arrow-up ms-1"></i></button>
-                </div>
-            </div>
-
-            <!-- 3. صفحة الأرباح والعمولات -->
-            <div id="page-profits" class="hidden-page">
-                <div class="card-custom">
-                    <h6 class="fw-bold mb-3"><i class="fa-solid fa-chart-line text-success me-2"></i>جدول أرباح الوكالة</h6>
-                    <div class="table-responsive" style="max-height: 400px;">
-                        <table class="table table-bordered table-striped text-center align-middle small">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>ماسات التارجت</th>
-                                    <th>راتب المضيف $</th>
-                                    <th>راتب الوكالة $</th>
-                                </tr>
-                            </thead>
-                            <tbody id="profit-table-body">
-                                <!-- البيانات تولد برمجياً -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 4. صفحة الإداريين -->
-            <div id="page-admin" class="hidden-page">
-                <div class="card-custom">
-                    <h6 class="fw-bold mb-3"><i class="fa-solid fa-user-plus text-primary me-2"></i>إنشاء حساب إداري جديد</h6>
-                    <div class="mb-2">
-                        <input type="text" id="new-admin-user" class="form-control" placeholder="اسم المستخدم للأدمين">
-                    </div>
-                    <div class="mb-3">
-                        <input type="password" id="new-admin-pass" class="form-control" placeholder="كلمة المرور">
-                    </div>
-                    <button class="btn btn-custom" onclick="addAdminUser()">إضافة الأدمين سحابياً <i class="fa-solid fa-plus ms-1"></i></button>
-                    
-                    <h6 class="fw-bold mt-4 mb-2">قائمة الإداريين المسجلين</h6>
-                    <ul id="admin-list" class="list-group">
-                        <!-- قائمة الأدمين -->
-                    </ul>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- شريط التنقل السفلي للموبايل -->
-        <div class="bottom-nav">
-            <div class="nav-item-custom active" onclick="switchPage('calc', this)">
-                <i class="fa-solid fa-calculator"></i>
-                <span>حساب التارجت</span>
-            </div>
-            <div class="nav-item-custom owner-only hidden-page" onclick="switchPage('rules', this)">
-                <i class="fa-solid fa-sliders"></i>
-                <span>قواعد التقفيل</span>
-            </div>
-            <div class="nav-item-custom owner-only hidden-page" onclick="switchPage('profits', this)">
-                <i class="fa-solid fa-chart-line"></i>
-                <span>الأرباح</span>
-            </div>
-            <div class="nav-item-custom owner-only hidden-page" onclick="switchPage('admin', this)">
-                <i class="fa-solid fa-users-gear"></i>
-                <span>الإداريين</span>
-            </div>
-        </div>
-
+        <div id="target-rules-list" class="mb-3" style="max-height:350px;overflow-y:auto"></div>
+        <button class="btn btn-custom" id="save-rules-btn" onclick="saveRulesCloud()">حفظ وتحديث الكميات سحابياً <i class="fa-solid fa-cloud-arrow-up ms-1"></i></button>
+      </div>
     </div>
 
-    <script>
-        const BIN_ID = '6ae9fcb6ffd5d16053a2dd2b';
-        const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+    <!-- 3. الأرباح -->
+    <div id="page-profits" class="hidden-page">
+      <div class="card-custom">
+        <h6 class="fw-bold mb-3"><i class="fa-solid fa-chart-line text-success me-2"></i>جدول أرباح الوكالة</h6>
+        <div class="table-responsive" style="max-height:450px">
+          <table class="table table-bordered table-striped text-center align-middle small mb-0">
+            <thead class="table-dark" style="position:sticky;top:0">
+              <tr><th>ماسات التارجت</th><th>راتب المضيف $</th><th>راتب الوكالة $</th></tr>
+            </thead>
+            <tbody id="profit-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
-        const TARGET_DATA = [
-            { coins: 16700, diamonds: 2783, hostSalary: 5, agencySalary: 1 },
-            { coins: 33500, diamonds: 5583, hostSalary: 9, agencySalary: 2 },
-            { coins: 66700, diamonds: 11117, hostSalary: 16, agencySalary: 4 },
-            { coins: 117000, diamonds: 19500, hostSalary: 28, agencySalary: 6 },
-            { coins: 167000, diamonds: 27833, hostSalary: 35, agencySalary: 10 },
-            { coins: 267000, diamonds: 44500, hostSalary: 55, agencySalary: 17 },
-            { coins: 500000, diamonds: 83333, hostSalary: 100, agencySalary: 33 },
-            { coins: 705600, diamonds: 117600, hostSalary: 141, agencySalary: 39 },
-            { coins: 1008000, diamonds: 168000, hostSalary: 201, agencySalary: 54 },
-            { coins: 1344000, diamonds: 224000, hostSalary: 268, agencySalary: 72 },
-            { coins: 1747200, diamonds: 291200, hostSalary: 325, agencySalary: 105 },
-            { coins: 2184000, diamonds: 364000, hostSalary: 406, agencySalary: 124 },
-            { coins: 2688000, diamonds: 448000, hostSalary: 500, agencySalary: 150 },
-            { coins: 3334000, diamonds: 555667, hostSalary: 600, agencySalary: 200 },
-            { coins: 4368000, diamonds: 728000, hostSalary: 786, agencySalary: 264 },
-            { coins: 5376000, diamonds: 896000, hostSalary: 968, agencySalary: 332 },
-            { coins: 6720000, diamonds: 1120000, hostSalary: 1210, agencySalary: 410 },
-            { coins: 8334000, diamonds: 1389000, hostSalary: 1500, agencySalary: 500 },
-            { coins: 10752000, diamonds: 1792000, hostSalary: 1935, agencySalary: 665 },
-            { coins: 13440000, diamonds: 2240000, hostSalary: 2419, agencySalary: 831 },
-            { coins: 16667000, diamonds: 2777833, hostSalary: 3000, agencySalary: 1000 },
-            { coins: 20160000, diamonds: 3360000, hostSalary: 3629, agencySalary: 1209 },
-            { coins: 24192000, diamonds: 4032000, hostSalary: 4355, agencySalary: 1451 },
-            { coins: 28560000, diamonds: 4760000, hostSalary: 5141, agencySalary: 1713 },
-            { coins: 33600000, diamonds: 5600000, hostSalary: 6048, agencySalary: 2016 },
-            { coins: 43680000, diamonds: 7280000, hostSalary: 7862, agencySalary: 2621 },
-            { coins: 83335000, diamonds: 13889167, hostSalary: 15000, agencySalary: 5000 }
-        ];
+    <!-- 4. الإداريين -->
+    <div id="page-admin" class="hidden-page">
+      <div class="card-custom">
+        <h6 class="fw-bold mb-3"><i class="fa-solid fa-user-plus text-primary me-2"></i>إنشاء حساب إداري جديد</h6>
+        <div class="mb-2"><input type="text" id="new-admin-user" class="form-control" placeholder="اسم المستخدم" autocomplete="off"></div>
+        <div class="mb-3"><input type="text" id="new-admin-pass" class="form-control" placeholder="كلمة المرور" autocomplete="off"></div>
+        <button class="btn btn-custom" id="add-admin-btn" onclick="addAdminUser()">إضافة الأدمن سحابياً <i class="fa-solid fa-plus ms-1"></i></button>
+        <h6 class="fw-bold mt-4 mb-2">قائمة الإداريين المسجلين</h6>
+        <ul id="admin-list" class="list-group"></ul>
+      </div>
+    </div>
 
-        let currentUser = null;
-        let adminUsers = [];
-        let targetRules = {};
+  </div>
 
-        async function fetchCloudData() {
-            try {
-                const res = await fetch(API_URL + '/latest', { cache: 'no-store' });
-                if (res.ok) {
-                    const json = await res.json();
-                    const data = json.record;
-                    if (data && data.adminUsers) {
-                        adminUsers = data.adminUsers;
-                    }
-                    if (data && data.targetRules && Object.keys(data.targetRules).length > 0) {
-                        targetRules = data.targetRules;
-                    }
-                }
-            } catch (err) {
-                console.log("استخدام البيانات الافتراضية");
-            }
+  <div class="bottom-nav">
+    <div class="nav-item-custom active" onclick="switchPage('calc',this)"><i class="fa-solid fa-calculator"></i><span>حساب التارجت</span></div>
+    <div class="nav-item-custom owner-only hidden-page" onclick="switchPage('rules',this)"><i class="fa-solid fa-sliders"></i><span>قواعد التقفيل</span></div>
+    <div class="nav-item-custom owner-only hidden-page" onclick="switchPage('profits',this)"><i class="fa-solid fa-chart-line"></i><span>الأرباح</span></div>
+    <div class="nav-item-custom owner-only hidden-page" onclick="switchPage('admin',this)"><i class="fa-solid fa-users-gear"></i><span>الإداريين</span></div>
+  </div>
+</div>
 
-            if (Object.keys(targetRules).length === 0) {
-                TARGET_DATA.forEach(t => targetRules[t.diamonds] = 1000);
-            }
-        }
+<script>
+/* ================== الإعدادات ==================
+   JSONBin: القراءة تعمل بدون مفتاح إذا كان الـ Bin عاماً (Public).
+   الكتابة (PUT) تتطلب Master Key أو Access Key من حسابك في jsonbin.io
+   ضع المفتاح هنا (يفضّل Access Key بصلاحية Update فقط على هذا الـ Bin). */
+const BIN_ID  = '6ae9fcb6ffd5d16053a2dd2b';
+const API_KEY = '';   // <-- ضع مفتاح JSONBin هنا
+const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+const OWNER_USER = 'owner';
+const OWNER_PASS = '111998s';
+const DEFAULT_HELP = 1000;
+const COINS_PER_DIAMOND = 6;
 
-        async function saveToCloud() {
-            try {
-                const payload = { adminUsers, targetRules };
-                await fetch(API_URL, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                alert('تم التحديث وحفظ البيانات سحابياً بنجاح! 🚀');
-            } catch (err) {
-                alert('حدث خطأ أثناء الحفظ السحابي');
-            }
-        }
+const TARGET_DATA = [
+  {coins:16700,diamonds:2783,hostSalary:5,agencySalary:1},
+  {coins:33500,diamonds:5583,hostSalary:9,agencySalary:2},
+  {coins:66700,diamonds:11117,hostSalary:16,agencySalary:4},
+  {coins:117000,diamonds:19500,hostSalary:28,agencySalary:6},
+  {coins:167000,diamonds:27833,hostSalary:35,agencySalary:10},
+  {coins:267000,diamonds:44500,hostSalary:55,agencySalary:17},
+  {coins:500000,diamonds:83333,hostSalary:100,agencySalary:33},
+  {coins:705600,diamonds:117600,hostSalary:141,agencySalary:39},
+  {coins:1008000,diamonds:168000,hostSalary:201,agencySalary:54},
+  {coins:1344000,diamonds:224000,hostSalary:268,agencySalary:72},
+  {coins:1747200,diamonds:291200,hostSalary:325,agencySalary:105},
+  {coins:2184000,diamonds:364000,hostSalary:406,agencySalary:124},
+  {coins:2688000,diamonds:448000,hostSalary:500,agencySalary:150},
+  {coins:3334000,diamonds:555667,hostSalary:600,agencySalary:200},
+  {coins:4368000,diamonds:728000,hostSalary:786,agencySalary:264},
+  {coins:5376000,diamonds:896000,hostSalary:968,agencySalary:332},
+  {coins:6720000,diamonds:1120000,hostSalary:1210,agencySalary:410},
+  {coins:8334000,diamonds:1389000,hostSalary:1500,agencySalary:500},
+  {coins:10752000,diamonds:1792000,hostSalary:1935,agencySalary:665},
+  {coins:13440000,diamonds:2240000,hostSalary:2419,agencySalary:831},
+  {coins:16667000,diamonds:2777833,hostSalary:3000,agencySalary:1000},
+  {coins:20160000,diamonds:3360000,hostSalary:3629,agencySalary:1209},
+  {coins:24192000,diamonds:4032000,hostSalary:4355,agencySalary:1451},
+  {coins:28560000,diamonds:4760000,hostSalary:5141,agencySalary:1713},
+  {coins:33600000,diamonds:5600000,hostSalary:6048,agencySalary:2016},
+  {coins:43680000,diamonds:7280000,hostSalary:7862,agencySalary:2621},
+  {coins:83335000,diamonds:13889167,hostSalary:15000,agencySalary:5000}
+];
 
-        document.getElementById('login-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const u = document.getElementById('username').value.trim();
-            const p = document.getElementById('password').value.trim();
+let currentUser = null;
+let adminUsers = [];
+let targetRules = {};
+let cloudLoaded = false; // لمنع الكتابة فوق السحاب ببيانات فارغة عند فشل التحميل
 
-            await fetchCloudData();
+const $ = id => document.getElementById(id);
+const fmt = n => Number(n).toLocaleString('en-US');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-            if (u === 'owner' && p === '111998s') {
-                currentUser = { username: 'owner', role: 'owner' };
-            } else {
-                const foundAdmin = adminUsers.find(a => a.username === u && a.password === p);
-                if (foundAdmin) {
-                    currentUser = { username: u, role: 'admin' };
-                } else {
-                    alert('اسم المستخدم أو كلمة المرور غير صحيحة!');
-                    return;
-                }
-            }
-            initApp();
-        });
+function toast(msg){
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(()=>t.classList.remove('show'), 2800);
+}
 
-        async function initApp() {
-            await fetchCloudData();
-            document.getElementById('login-page').classList.add('hidden-page');
-            document.getElementById('app-content').classList.remove('hidden-page');
+/* ================== السحاب (JSONBin) ================== */
+function headers(write){
+  const h = {'X-Bin-Meta':'false'};
+  if (API_KEY) h['X-Master-Key'] = API_KEY;
+  if (write) h['Content-Type'] = 'application/json';
+  return h;
+}
 
-            document.getElementById('user-display').innerText = currentUser.username;
-            document.getElementById('role-display').innerText = currentUser.role === 'owner' ? 'المالك الرئيسي (Owner)' : 'مساعد إداري (Admin)';
+async function loadCloud(){
+  try{
+    const res = await fetch(API_URL + '/latest', {headers: headers(false), cache:'no-store'});
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    const data = json.record !== undefined ? json.record : json;
+    adminUsers  = Array.isArray(data.adminUsers) ? data.adminUsers : [];
+    targetRules = (data.targetRules && typeof data.targetRules === 'object') ? data.targetRules : {};
+    cloudLoaded = true;
+    try{ localStorage.setItem('yahlan_cache', JSON.stringify({adminUsers, targetRules})); }catch(e){}
+    return true;
+  }catch(err){
+    // نسخة احتياطية محلية للقراءة فقط
+    try{
+      const c = JSON.parse(localStorage.getItem('yahlan_cache') || 'null');
+      if (c){ adminUsers = c.adminUsers || []; targetRules = c.targetRules || {}; }
+    }catch(e){}
+    cloudLoaded = false;
+    return false;
+  }
+}
 
-            if (currentUser.role === 'owner') {
-                document.querySelectorAll('.owner-only').forEach(el => el.classList.remove('hidden-page'));
-            } else {
-                document.querySelectorAll('.owner-only').forEach(el => el.classList.add('hidden-page'));
-            }
+async function saveCloud(){
+  if (!cloudLoaded){ toast('تعذر الاتصال بالسحاب، لم يتم الحفظ'); return false; }
+  try{
+    const res = await fetch(API_URL, {
+      method:'PUT', headers: headers(true),
+      body: JSON.stringify({adminUsers, targetRules})
+    });
+    if (!res.ok){
+      toast(res.status === 401 || res.status === 403
+        ? 'مفتاح JSONBin مفقود أو غير صالح للكتابة'
+        : 'فشل الحفظ السحابي (' + res.status + ')');
+      return false;
+    }
+    try{ localStorage.setItem('yahlan_cache', JSON.stringify({adminUsers, targetRules})); }catch(e){}
+    toast('تم الحفظ سحابياً بنجاح 🚀');
+    return true;
+  }catch(err){
+    toast('حدث خطأ في الاتصال أثناء الحفظ');
+    return false;
+  }
+}
 
-            populateDropdowns();
-            renderRulesPage();
-            renderProfitTable();
-            renderAdminList();
-        }
+function ruleFor(diamonds){
+  const v = targetRules[diamonds];
+  return (v !== undefined && v !== null && !isNaN(v)) ? Number(v) : DEFAULT_HELP;
+}
 
-        function logout() {
-            currentUser = null;
-            document.getElementById('app-content').classList.add('hidden-page');
-            document.getElementById('login-page').classList.remove('hidden-page');
-        }
+/* ================== الدخول والخروج ================== */
+$('login-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const u = $('username').value.trim();
+  const p = $('password').value.trim();
+  const btn = $('login-btn'); btn.disabled = true;
 
-        function switchPage(pageId, navEl) {
-            document.querySelectorAll('#page-calc, #page-rules, #page-profits, #page-admin').forEach(p => p.classList.add('hidden-page'));
-            document.querySelectorAll('.nav-item-custom').forEach(n => n.classList.remove('active'));
+  const ok = await loadCloud();
 
-            document.getElementById(`page-${pageId}`).classList.remove('hidden-page');
-            navEl.classList.add('active');
-        }
+  if (u === OWNER_USER && p === OWNER_PASS){
+    currentUser = {username: OWNER_USER, role:'owner'};
+  } else {
+    const found = adminUsers.find(a => a.username === u && a.password === p);
+    if (!found){
+      btn.disabled = false;
+      toast(ok ? 'اسم المستخدم أو كلمة المرور غير صحيحة!' : 'تعذر الاتصال بالسحاب، تحقق من الإنترنت');
+      return;
+    }
+    currentUser = {username: u, role:'admin'};
+  }
+  btn.disabled = false;
+  if (!ok) toast('تعذر الاتصال بالسحاب، يتم عرض آخر نسخة محفوظة (قراءة فقط)');
+  initApp();
+});
 
-        function toggleInputMode() {
-            const mode = document.getElementById('calc-mode').value;
-            if (mode === 'diamonds') {
-                document.getElementById('diamonds-input-group').classList.remove('hidden-page');
-                document.getElementById('coins-input-group').classList.add('hidden-page');
-            } else {
-                document.getElementById('diamonds-input-group').classList.add('hidden-page');
-                document.getElementById('coins-input-group').classList.remove('hidden-page');
-            }
-        }
+function initApp(){
+  $('login-page').classList.add('hidden-page');
+  $('app-content').classList.remove('hidden-page');
+  $('user-display').textContent = currentUser.username;
+  $('role-display').textContent = currentUser.role === 'owner' ? 'المالك الرئيسي (Owner)' : 'مساعد إداري (Admin)';
+  document.querySelectorAll('.owner-only').forEach(el =>
+    el.classList.toggle('hidden-page', currentUser.role !== 'owner'));
+  populateDropdowns(); renderRulesPage(); renderProfitTable(); renderAdminList();
+  switchPage('calc', document.querySelector('.nav-item-custom'));
+}
 
-        function populateDropdowns() {
-            const select = document.getElementById('target-select');
-            select.innerHTML = '<option value="auto">تلقائي (التارجت القادم فوراً)</option>';
-            TARGET_DATA.forEach(t => {
-                const opt = document.createElement('option');
-                opt.value = t.diamonds;
-                opt.innerText = `${t.diamonds.toLocaleString()} ماسة (راتب $${t.hostSalary})`;
-                select.appendChild(opt);
-            });
-        }
+function logout(){
+  currentUser = null;
+  $('password').value = '';
+  $('result-area').classList.add('hidden-page');
+  $('app-content').classList.add('hidden-page');
+  $('login-page').classList.remove('hidden-page');
+}
 
-        function renderRulesPage() {
-            const container = document.getElementById('target-rules-list');
-            container.innerHTML = '';
-            TARGET_DATA.forEach(t => {
-                const currentAmount = targetRules[t.diamonds] !== undefined ? targetRules[t.diamonds] : 1000;
-                const div = document.createElement('div');
-                div.className = 'target-rule-item d-flex justify-content-between align-items-center';
-                div.innerHTML = `
-                    <div>
-                        <strong class="d-block">${t.diamonds.toLocaleString()} ماسة</strong>
-                        <small class="text-muted">راتب $${t.hostSalary}</small>
-                    </div>
-                    <div class="input-group" style="width: 150px;">
-                        <input type="number" class="form-control form-control-sm rule-amount-input" data-target="${t.diamonds}" value="${currentAmount}">
-                        <span class="input-group-text small">ماسة</span>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
+async function refreshData(){
+  const ok = await loadCloud();
+  renderRulesPage(); renderAdminList();
+  toast(ok ? 'تم تحديث البيانات من السحاب' : 'تعذر الاتصال بالسحاب');
+}
 
-        function applyGlobalAmount() {
-            const val = parseFloat(document.getElementById('global-amount-input').value) || 0;
-            document.querySelectorAll('.rule-amount-input').forEach(inp => inp.value = val);
-        }
+function switchPage(id, navEl){
+  ['calc','rules','profits','admin'].forEach(p => $('page-'+p).classList.add('hidden-page'));
+  document.querySelectorAll('.nav-item-custom').forEach(n => n.classList.remove('active'));
+  $('page-'+id).classList.remove('hidden-page');
+  if (navEl) navEl.classList.add('active');
+}
 
-        async function saveRulesCloud() {
-            document.querySelectorAll('.rule-amount-input').forEach(inp => {
-                const target = inp.getAttribute('data-target');
-                targetRules[target] = parseFloat(inp.value) || 0;
-            });
-            await saveToCloud();
-        }
+/* ================== حساب التارجت ================== */
+function toggleInputMode(){
+  const d = $('calc-mode').value === 'diamonds';
+  $('diamonds-input-group').classList.toggle('hidden-page', !d);
+  $('coins-input-group').classList.toggle('hidden-page', d);
+}
 
-        function renderProfitTable() {
-            const tbody = document.getElementById('profit-table-body');
-            tbody.innerHTML = '';
-            TARGET_DATA.forEach(t => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong>${t.diamonds.toLocaleString()}</strong></td>
-                    <td class="text-primary">$${t.hostSalary}</td>
-                    <td class="text-success font-weight-bold">$${t.agencySalary}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
+function populateDropdowns(){
+  const sel = $('target-select');
+  sel.innerHTML = '<option value="auto">تلقائي (التارجت القادم فوراً)</option>';
+  TARGET_DATA.forEach(t => {
+    const o = document.createElement('option');
+    o.value = t.diamonds;
+    o.textContent = `${fmt(t.diamonds)} ماسة (راتب $${fmt(t.hostSalary)})`;
+    sel.appendChild(o);
+  });
+}
 
-        function calculateTarget() {
-            const mode = document.getElementById('calc-mode').value;
-            let currentDiamonds = 0;
+let lastReport = null;
 
-            if (mode === 'diamonds') {
-                currentDiamonds = parseFloat(document.getElementById('achieved-diamonds').value) || 0;
-            } else {
-                const coins = parseFloat(document.getElementById('achieved-coins').value) || 0;
-                currentDiamonds = Math.round(coins / 6);
-            }
+function calculateTarget(){
+  let current = 0;
+  if ($('calc-mode').value === 'diamonds'){
+    current = parseFloat($('achieved-diamonds').value) || 0;
+  } else {
+    current = Math.round((parseFloat($('achieved-coins').value) || 0) / COINS_PER_DIAMOND);
+  }
+  if (current < 0) current = 0;
 
-            const selectedTargetVal = document.getElementById('target-select').value;
-            let targetObj = null;
+  const selVal = $('target-select').value;
+  let target;
+  if (selVal === 'auto'){
+    target = TARGET_DATA.find(t => t.diamonds > current) || TARGET_DATA[TARGET_DATA.length - 1];
+  } else {
+    target = TARGET_DATA.find(t => String(t.diamonds) === selVal);
+  }
 
-            if (selectedTargetVal === 'auto') {
-                targetObj = TARGET_DATA.find(t => t.diamonds > currentDiamonds) || TARGET_DATA[TARGET_DATA.length - 1];
-            } else {
-                targetObj = TARGET_DATA.find(t => t.diamonds == selectedTargetVal);
-            }
+  const deficit = target.diamonds - current;
+  const maxHelp = ruleFor(target.diamonds);
+  const reached = deficit <= 0;
+  const eligible = !reached && deficit <= maxHelp;
 
-            const deficit = targetObj.diamonds - currentDiamonds;
-            const maxHelpDiamonds = targetRules[targetObj.diamonds] !== undefined ? targetRules[targetObj.diamonds] : 1000;
+  $('res-target-val').textContent = `${fmt(target.diamonds)} ماسة`;
+  $('res-current-diamonds').textContent = fmt(current);
+  $('res-deficit').textContent = reached ? 'محقق بالفعل 🎉' : `${fmt(deficit)} ماسة`;
+  $('res-max-help').textContent = `${fmt(maxHelp)} ماسة`;
 
-            const isEligible = deficit <= maxHelpDiamonds && deficit > 0;
-            const alreadyReached = deficit <= 0;
+  const badge = $('res-status-badge');
+  let agentPay, status, salary;
+  if (reached){
+    badge.className = 'badge-status badge-info2';
+    status = 'محقق بدون تقفيل';
+    agentPay = '0 ماسة';
+    salary = `$${fmt(target.hostSalary)}`;
+  } else if (eligible){
+    badge.className = 'badge-status badge-success';
+    status = 'مستحق للتقفيل ✅';
+    agentPay = `${fmt(deficit)} ماسة`;
+    salary = `$${fmt(target.hostSalary)}`;
+  } else {
+    badge.className = 'badge-status badge-danger';
+    status = 'النقص أكبر من المسموح ❌';
+    agentPay = 'لا يوجد (يتجاوز الحد الأقصى)';
+    // لا يتحقق التارجت بدون تقفيل: راتب أعلى تارجت تم تحقيقه فعلياً
+    const hit = TARGET_DATA.filter(t => t.diamonds <= current).pop();
+    salary = hit ? `$${fmt(hit.hostSalary)} (تارجت ${fmt(hit.diamonds)})` : '$0';
+  }
+  badge.textContent = status;
+  $('res-agent-pay').textContent = agentPay;
+  $('res-host-salary').textContent = salary;
+  $('result-area').classList.remove('hidden-page');
 
-            document.getElementById('res-target-val').innerText = `${targetObj.diamonds.toLocaleString()} ماسة`;
-            document.getElementById('res-current-diamonds').innerText = currentDiamonds.toLocaleString();
-            document.getElementById('res-deficit').innerText = deficit > 0 ? `${deficit.toLocaleString()} ماسة` : 'محقق بالفعل 🎉';
-            document.getElementById('res-max-help').innerText = `${maxHelpDiamonds.toLocaleString()} ماسة`;
+  lastReport = {
+    target: `${fmt(target.diamonds)} ماسة`, current: fmt(current),
+    deficit: $('res-deficit').textContent, agentPay, salary, status
+  };
+}
 
-            const badge = document.getElementById('res-status-badge');
-            if (alreadyReached) {
-                badge.className = 'badge-status badge-success';
-                badge.innerText = 'محقق بدون تقفيل';
-                document.getElementById('res-agent-pay').innerText = '0 ماسة';
-            } else if (isEligible) {
-                badge.className = 'badge-status badge-success';
-                badge.innerText = 'مستحق للتقفيل ✅';
-                document.getElementById('res-agent-pay').innerText = `${deficit.toLocaleString()} ماسة`;
-            } else {
-                badge.className = 'badge-status badge-danger';
-                badge.innerText = 'النقص أكبر من المسموح ❌';
-                document.getElementById('res-agent-pay').innerText = `يتجاوز الحد الأقصى (${maxHelpDiamonds.toLocaleString()})`;
-            }
+async function copyReport(){
+  if (!lastReport) return;
+  const r = lastReport;
+  const text =
+`📊 *تقرير تقفيل تارجت وكالة يا أهلاً*
+-----------------------------------
+🎯 *التارجت المستهدف:* ${r.target}
+💎 *المحقق الحالي:* ${r.current}
+🔻 *النقص الإجمالي:* ${r.deficit}
+🤝 *تقفيل الوكيل المطلوب:* ${r.agentPay}
+💵 *راتب المضيف:* ${r.salary}
+📌 *الحالة:* ${r.status}
+-----------------------------------`;
+  try{
+    await navigator.clipboard.writeText(text);
+  }catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); }catch(_){}
+    document.body.removeChild(ta);
+  }
+  toast('تم نسخ التقرير، الصقه الآن في الواتساب');
+}
 
-            document.getElementById('res-host-salary').innerText = `$${targetObj.hostSalary}`;
-            document.getElementById('result-area').classList.remove('hidden-page');
-        }
+/* ================== قواعد التقفيل ================== */
+function renderRulesPage(){
+  const box = $('target-rules-list');
+  box.innerHTML = '';
+  TARGET_DATA.forEach(t => {
+    const div = document.createElement('div');
+    div.className = 'target-rule-item d-flex justify-content-between align-items-center';
+    div.innerHTML = `
+      <div>
+        <strong class="d-block">${fmt(t.diamonds)} ماسة</strong>
+        <small class="text-muted">راتب $${fmt(t.hostSalary)}</small>
+      </div>
+      <div class="input-group" style="width:160px">
+        <input type="number" min="0" class="form-control form-control-sm rule-amount-input" data-target="${t.diamonds}" value="${ruleFor(t.diamonds)}">
+        <span class="input-group-text small">ماسة</span>
+      </div>`;
+    box.appendChild(div);
+  });
+}
 
-        function copyReport() {
-            const target = document.getElementById('res-target-val').innerText;
-            const current = document.getElementById('res-current-diamonds').innerText;
-            const deficit = document.getElementById('res-deficit').innerText;
-            const agentPay = document.getElementById('res-agent-pay').innerText;
-            const salary = document.getElementById('res-host-salary').innerText;
-            const status = document.getElementById('res-status-badge').innerText;
+function applyGlobalAmount(){
+  const v = Math.max(0, parseFloat($('global-amount-input').value) || 0);
+  document.querySelectorAll('.rule-amount-input').forEach(i => i.value = v);
+  toast('تم التطبيق على الكل، اضغط حفظ لتأكيد التحديث');
+}
 
-            const text = `📊 *تقرير تقفيل تارجت وكالة يا أهلاً*\n` +
-                         `-----------------------------------\n` +
-                         `🎯 *التارجت المستهدف:* ${target}\n` +
-                         `💎 *المحقق الحالي:* ${current}\n` +
-                         `🔻 *النقص الإجمالي:* ${deficit}\n` +
-                         `🤝 *تقفيل الوكيل المطلوب:* ${agentPay}\n` +
-                         `💵 *الراتب بعد التقفيل:* ${salary}\n` +
-                         `📌 *الحالة:* ${status}\n` +
-                         `-----------------------------------`;
+async function saveRulesCloud(){
+  if (currentUser?.role !== 'owner') return;
+  const btn = $('save-rules-btn'); btn.disabled = true;
+  const edited = {};
+  document.querySelectorAll('.rule-amount-input').forEach(i => {
+    edited[i.dataset.target] = Math.max(0, parseFloat(i.value) || 0);
+  });
+  await loadCloud();          // أحدث قائمة إداريين قبل الكتابة
+  targetRules = edited;
+  await saveCloud();
+  renderAdminList();
+  btn.disabled = false;
+}
 
-            navigator.clipboard.writeText(text);
-            alert('تم نسخ التقرير بنجاح! يمكنك لصقه الآن في الواتساب.');
-        }
+/* ================== الأرباح ================== */
+function renderProfitTable(){
+  const tb = $('profit-table-body');
+  tb.innerHTML = '';
+  TARGET_DATA.forEach(t => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><strong>${fmt(t.diamonds)}</strong></td>
+      <td class="text-primary">$${fmt(t.hostSalary)}</td>
+      <td class="text-success fw-bold">$${fmt(t.agencySalary)}</td>`;
+    tb.appendChild(tr);
+  });
+}
 
-        async function addAdminUser() {
-            const u = document.getElementById('new-admin-user').value.trim();
-            const p = document.getElementById('new-admin-pass').value.trim();
+/* ================== الإداريين ================== */
+async function addAdminUser(){
+  if (currentUser?.role !== 'owner') return;
+  const u = $('new-admin-user').value.trim();
+  const p = $('new-admin-pass').value.trim();
+  if (!u || !p){ toast('يرجى كتابة الاسم وكلمة المرور'); return; }
+  if (u === OWNER_USER){ toast('هذا الاسم محجوز'); return; }
 
-            if (!u || !p) {
-                alert('يرجى كتابة الاسم وكلمة المرور');
-                return;
-            }
+  const btn = $('add-admin-btn'); btn.disabled = true;
+  await loadCloud();
+  if (adminUsers.some(a => a.username === u)){
+    toast('اسم المستخدم موجود مسبقاً'); btn.disabled = false; return;
+  }
+  adminUsers.push({username:u, password:p});
+  if (await saveCloud()){
+    $('new-admin-user').value = ''; $('new-admin-pass').value = '';
+  } else {
+    adminUsers = adminUsers.filter(a => a.username !== u);
+  }
+  renderAdminList();
+  btn.disabled = false;
+}
 
-            await fetchCloudData();
-            adminUsers.push({ username: u, password: p });
-            document.getElementById('new-admin-user').value = '';
-            document.getElementById('new-admin-pass').value = '';
-            renderAdminList();
-            await saveToCloud();
-        }
+async function removeAdmin(username){
+  if (currentUser?.role !== 'owner') return;
+  if (!confirm(`حذف الأدمن "${username}"؟`)) return;
+  await loadCloud();
+  adminUsers = adminUsers.filter(a => a.username !== username);
+  await saveCloud();
+  renderAdminList();
+}
 
-        async function removeAdmin(index) {
-            await fetchCloudData();
-            adminUsers.splice(index, 1);
-            renderAdminList();
-            await saveToCloud();
-        }
-
-        function renderAdminList() {
-            const ul = document.getElementById('admin-list');
-            ul.innerHTML = '';
-            adminUsers.forEach((a, idx) => {
-                const li = document.createElement('li');
-                li.className = 'list-group-item d-flex justify-content-between align-items-center small';
-                li.innerHTML = `
-                    <span><i class="fa-solid fa-user me-2"></i>${a.username}</span>
-                    <button class="btn btn-sm btn-outline-danger" onclick="removeAdmin(${idx})"><i class="fa-solid fa-trash"></i></button>
-                `;
-                ul.appendChild(li);
-            });
-        }
-    </script>
+function renderAdminList(){
+  const ul = $('admin-list');
+  ul.innerHTML = '';
+  if (!adminUsers.length){
+    ul.innerHTML = '<li class="list-group-item small text-muted text-center">لا يوجد إداريين</li>';
+    return;
+  }
+  adminUsers.forEach(a => {
+    const li = document.createElement('li');
+    li.className = 'list-group-item d-flex justify-content-between align-items-center small';
+    li.innerHTML = `<span><i class="fa-solid fa-user me-2"></i>${esc(a.username)}</span>
+      <button class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></button>`;
+    li.querySelector('button').addEventListener('click', () => removeAdmin(a.username));
+    ul.appendChild(li);
+  });
+}
+</script>
 </body>
 </html>
