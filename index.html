@@ -284,22 +284,8 @@
                 </div>
             </div>
 
-            <!-- 4. صفحة الإداريين وإعدادات GitHub API -->
+            <!-- 4. صفحة الإداريين -->
             <div id="page-admin" class="hidden-page">
-                <!-- إعدادات رمز GitHub Token -->
-                <div class="card-custom">
-                    <h6 class="fw-bold mb-2"><i class="fa-solid fa-key text-warning me-2"></i>رمز GitHub API Token</h6>
-                    <p class="text-muted extra-small mb-2">ضع الرمز هنا لتفعيل المزامنة الفورية وقاعدة البيانات السحابية.</p>
-                    <div class="input-group mb-2">
-                        <input type="password" id="github-token-input" class="form-control" placeholder="ghp_xxxxxxxxxxxx">
-                        <button class="btn btn-primary" onclick="saveGitHubToken()">حفظ الرمز</button>
-                    </div>
-                    <div class="input-group mb-2">
-                        <input type="text" id="github-repo-input" class="form-control" placeholder="اسم المستخدم/المستودع (مثال: bytesal/taget-calculator)">
-                        <button class="btn btn-secondary" onclick="saveGitHubRepo()">ربط المستودع</button>
-                    </div>
-                </div>
-
                 <!-- إضافة حساب إداري -->
                 <div class="card-custom">
                     <h6 class="fw-bold mb-3"><i class="fa-solid fa-user-plus text-primary me-2"></i>إنشاء حساب إداري جديد</h6>
@@ -343,6 +329,9 @@
     </div>
 
     <script>
+        const BIN_ID = '6ae9fcb6ffd5d16053a2dd2b';
+        const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+
         const TARGET_DATA = [
             { coins: 16700, diamonds: 2783, hostSalary: 5, agencySalary: 1 },
             { coins: 33500, diamonds: 5583, hostSalary: 9, agencySalary: 2 },
@@ -376,31 +365,28 @@
         let currentUser = null;
         let adminUsers = [];
         let targetRules = {};
-        let githubToken = localStorage.getItem('gh_token') || '';
-        let githubRepo = localStorage.getItem('gh_repo') || 'bytesal/taget-calculator';
 
-        // جلب البيانات من السحاب فور فتح التطبيق
+        // جلب البيانات من JSONBin السحابي
         async function fetchCloudData() {
             try {
-                const res = await fetch(`https://api.github.com/repos/${githubRepo}/contents/db.json`, {
-                    headers: githubToken ? { 'Authorization': `token ${githubToken}` } : {},
+                const res = await fetch(API_URL + '/latest', {
+                    headers: { 'X-Master-Key': '$2a$10$XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' }, // مجاني ومفتوح للقراءة في وضع القراءة العام
                     cache: 'no-store'
                 });
                 if (res.ok) {
-                    const data = await res.json();
-                    const content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-                    if (content.adminUsers) {
-                        adminUsers = content.adminUsers;
+                    const json = await res.json();
+                    const data = json.record;
+                    if (data && data.adminUsers) {
+                        adminUsers = data.adminUsers;
                     }
-                    if (content.targetRules && Object.keys(content.targetRules).length > 0) {
-                        targetRules = content.targetRules;
+                    if (data && data.targetRules && Object.keys(data.targetRules).length > 0) {
+                        targetRules = data.targetRules;
                     }
                 }
             } catch (err) {
-                console.log("خطأ في جلب البيانات السحابية");
+                console.log("استخدام البيانات الافتراضية");
             }
 
-            // إذا لم تكن هناك قواعد محددة، ضع الافتراضي
             if (Object.keys(targetRules).length === 0) {
                 TARGET_DATA.forEach(t => targetRules[t.diamonds] = 1000);
             }
@@ -408,35 +394,19 @@
 
         // حفظ البيانات في السحاب
         async function saveToCloud() {
-            if (!githubToken || !githubRepo) return;
             try {
                 const payload = { adminUsers, targetRules };
-                const contentEncoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
-                
-                let sha = '';
-                const getRes = await fetch(`https://api.github.com/repos/${githubRepo}/contents/db.json`, {
-                    headers: { 'Authorization': `token ${githubToken}` },
-                    cache: 'no-store'
-                });
-                if (getRes.ok) {
-                    const fileData = await getRes.json();
-                    sha = fileData.sha;
-                }
-
-                await fetch(`https://api.github.com/repos/${githubRepo}/contents/db.json`, {
+                await fetch(API_URL, {
                     method: 'PUT',
                     headers: {
-                        'Authorization': `token ${githubToken}`,
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': '$2a$10$XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
                     },
-                    body: JSON.stringify({
-                        message: 'Update database via app',
-                        content: contentEncoded,
-                        sha: sha ? sha : undefined
-                    })
+                    body: JSON.stringify(payload)
                 });
+                alert('تم التحديث وحفظ البيانات سحابياً بنجاح! 🚀');
             } catch (err) {
-                console.error("خطأ في الحفظ السحابي:", err);
+                alert('حدث خطأ أثناء الحفظ السحابي');
             }
         }
 
@@ -445,7 +415,7 @@
             const u = document.getElementById('username').value.trim();
             const p = document.getElementById('password').value.trim();
 
-            await fetchCloudData(); // جلب أحدث البيانات المحدثة سحابياً
+            await fetchCloudData();
 
             if (u === 'owner' && p === '111998s') {
                 currentUser = { username: 'owner', role: 'owner' };
@@ -479,8 +449,6 @@
             renderRulesPage();
             renderProfitTable();
             renderAdminList();
-            document.getElementById('github-token-input').value = githubToken;
-            document.getElementById('github-repo-input').value = githubRepo;
         }
 
         function logout() {
@@ -551,7 +519,6 @@
                 targetRules[target] = parseFloat(inp.value) || 0;
             });
             await saveToCloud();
-            alert('تم حفظ كميات التقفيل وتحديثها سحابياً لجميع الأجهزة بنجاح!');
         }
 
         function renderProfitTable() {
@@ -649,13 +616,12 @@
                 return;
             }
 
-            await fetchCloudData(); // تحديث القائمة قبل الإضافة لعدم مسح حسابات سابقة
+            await fetchCloudData();
             adminUsers.push({ username: u, password: p });
             document.getElementById('new-admin-user').value = '';
             document.getElementById('new-admin-pass').value = '';
             renderAdminList();
             await saveToCloud();
-            alert('تمت إضافة الأدمين وحفظه سحابياً بنجاح!');
         }
 
         async function removeAdmin(index) {
@@ -677,18 +643,6 @@
                 `;
                 ul.appendChild(li);
             });
-        }
-
-        function saveGitHubToken() {
-            githubToken = document.getElementById('github-token-input').value.trim();
-            localStorage.setItem('gh_token', githubToken);
-            alert('تم حفظ الرمز بنجاح!');
-        }
-
-        function saveGitHubRepo() {
-            githubRepo = document.getElementById('github-repo-input').value.trim();
-            localStorage.setItem('gh_repo', githubRepo);
-            alert('تم ربط المستودع بنجاح!');
         }
     </script>
 </body>
