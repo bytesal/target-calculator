@@ -374,39 +374,39 @@
         ];
 
         let currentUser = null;
-        let adminUsers = JSON.parse(localStorage.getItem('admin_users')) || [];
-        let targetRules = JSON.parse(localStorage.getItem('target_rules_amount')) || {};
+        let adminUsers = [];
+        let targetRules = {};
         let githubToken = localStorage.getItem('gh_token') || '';
         let githubRepo = localStorage.getItem('gh_repo') || 'bytesal/taget-calculator';
 
-        if (Object.keys(targetRules).length === 0) {
-            TARGET_DATA.forEach(t => targetRules[t.diamonds] = 1000);
-        }
-
-        // جلب البيانات من ملف db.json السحابي
+        // جلب البيانات من السحاب فور فتح التطبيق
         async function fetchCloudData() {
             try {
                 const res = await fetch(`https://api.github.com/repos/${githubRepo}/contents/db.json`, {
-                    headers: githubToken ? { 'Authorization': `token ${githubToken}` } : {}
+                    headers: githubToken ? { 'Authorization': `token ${githubToken}` } : {},
+                    cache: 'no-store'
                 });
                 if (res.ok) {
                     const data = await res.json();
                     const content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
                     if (content.adminUsers) {
                         adminUsers = content.adminUsers;
-                        localStorage.setItem('admin_users', JSON.stringify(adminUsers));
                     }
                     if (content.targetRules && Object.keys(content.targetRules).length > 0) {
                         targetRules = content.targetRules;
-                        localStorage.setItem('target_rules_amount', JSON.stringify(targetRules));
                     }
                 }
             } catch (err) {
-                console.log("الاعتماد على الذاكرة المحلية");
+                console.log("خطأ في جلب البيانات السحابية");
+            }
+
+            // إذا لم تكن هناك قواعد محددة، ضع الافتراضي
+            if (Object.keys(targetRules).length === 0) {
+                TARGET_DATA.forEach(t => targetRules[t.diamonds] = 1000);
             }
         }
 
-        // حفظ البيانات في ملف db.json السحابي
+        // حفظ البيانات في السحاب
         async function saveToCloud() {
             if (!githubToken || !githubRepo) return;
             try {
@@ -415,7 +415,8 @@
                 
                 let sha = '';
                 const getRes = await fetch(`https://api.github.com/repos/${githubRepo}/contents/db.json`, {
-                    headers: { 'Authorization': `token ${githubToken}` }
+                    headers: { 'Authorization': `token ${githubToken}` },
+                    cache: 'no-store'
                 });
                 if (getRes.ok) {
                     const fileData = await getRes.json();
@@ -444,7 +445,7 @@
             const u = document.getElementById('username').value.trim();
             const p = document.getElementById('password').value.trim();
 
-            await fetchCloudData(); // جلب أحدث البيانات قبل مطابقة الحسابات
+            await fetchCloudData(); // جلب أحدث البيانات المحدثة سحابياً
 
             if (u === 'owner' && p === '111998s') {
                 currentUser = { username: 'owner', role: 'owner' };
@@ -460,7 +461,8 @@
             initApp();
         });
 
-        function initApp() {
+        async function initApp() {
+            await fetchCloudData();
             document.getElementById('login-page').classList.add('hidden-page');
             document.getElementById('app-content').classList.remove('hidden-page');
 
@@ -548,7 +550,6 @@
                 const target = inp.getAttribute('data-target');
                 targetRules[target] = parseFloat(inp.value) || 0;
             });
-            localStorage.setItem('target_rules_amount', JSON.stringify(targetRules));
             await saveToCloud();
             alert('تم حفظ كميات التقفيل وتحديثها سحابياً لجميع الأجهزة بنجاح!');
         }
@@ -648,8 +649,8 @@
                 return;
             }
 
+            await fetchCloudData(); // تحديث القائمة قبل الإضافة لعدم مسح حسابات سابقة
             adminUsers.push({ username: u, password: p });
-            localStorage.setItem('admin_users', JSON.stringify(adminUsers));
             document.getElementById('new-admin-user').value = '';
             document.getElementById('new-admin-pass').value = '';
             renderAdminList();
@@ -658,8 +659,8 @@
         }
 
         async function removeAdmin(index) {
+            await fetchCloudData();
             adminUsers.splice(index, 1);
-            localStorage.setItem('admin_users', JSON.stringify(adminUsers));
             renderAdminList();
             await saveToCloud();
         }
